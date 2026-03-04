@@ -2,9 +2,7 @@
 resource "random_password" "trustify-db-admin-password" {
   count   = var.create_rds ? 1 : 0
   length  = 32
-  special = true
-  # Exclude problematic characters that might cause issues in connection strings
-  override_special = "!#$%&*()-_=+[]{}<>:?"
+  special = false  # Only alphanumeric characters
 }
 
 # DB Subnet Group
