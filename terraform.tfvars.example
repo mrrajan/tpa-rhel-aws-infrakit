@@ -1,0 +1,10 @@
+# Example Terraform Variables File
+# Copy this file to terraform.tfvars and customize as needed
+
+# Instance name - used for naming EC2 and related resources
+instance_name = "tpa-rhel-aws"
+
+# Whether to create RDS PostgreSQL database instance
+# Set to true to provision RDS alongside EC2
+create_rds = false
+

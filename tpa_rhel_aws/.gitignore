@@ -1,0 +1,37 @@
+# Terraform state files
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+# Terraform directory
+.terraform/
+.terraform.lock.hcl
+
+# Variable files (except example)
+*.tfvars
+!terraform.tfvars.example
+
+# SSH keys and sensitive files
+*.pem
+*.key
+ssh-key-*.pem
+
+# Crash log files
+crash.log
+
+# Override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# CLI configuration files
+.terraformrc
+terraform.rc
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

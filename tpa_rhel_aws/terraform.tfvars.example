@@ -1,0 +1,31 @@
+# Example Terraform Variables File
+# Copy this file to terraform.tfvars and customize as needed
+
+# AWS Configuration
+aws_region   = "us-east-1"
+project_name = "tpa-rhel-aws"
+environment  = "development"
+
+# VPC Configuration
+vpc_cidr             = "10.0.0.0/16"
+public_subnet_cidr   = "10.0.1.0/24"
+private_subnet_cidrs = ["10.0.10.0/24", "10.0.11.0/24"]
+availability_zones   = ["us-east-1a", "us-east-1b"]
+
+# EC2 Configuration
+ami_id            = "ami-0d8d3b1122e36c000"  # RHEL AMI
+instance_type     = "m6i.2xlarge"
+root_volume_size  = 100
+
+# SSH Configuration
+# WARNING: Restrict this in production! Current setting allows SSH from anywhere
+ssh_allowed_cidr = "0.0.0.0/0"
+ssh_key_path     = "./ssh-key-${project_name}.pem"
+
+# RDS Configuration
+create_rds         = false  # Set to true to create RDS PostgreSQL instance
+db_master_user     = "postgres"
+db_instance_class  = "db.m7g.large"
+db_engine_version  = "17.2"
+db_allocated_storage = 20
+db_name            = "postgres"
