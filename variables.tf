@@ -12,3 +12,8 @@ variable "create_rds" {
   default     = false
 }
 
+variable "ssh_key_path" {
+  description = "Path where SSH private key will be saved (leave empty to auto-generate based on project name)"
+  type        = string
+  default     = ""
+}

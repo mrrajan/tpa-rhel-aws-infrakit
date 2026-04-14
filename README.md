@@ -6,60 +6,60 @@ OpenTofu/Terraform infrastructure to provision AWS EC2 instances (RHEL) with opt
 
 ### 1. Prerequisites
 
-- [Terraform](https://www.terraform.io/downloads.html) or [OpenTofu](https://opentofu.org/) >= 1.0
+- [OpenTofu](https://opentofu.org/) >= 1.0 (drop-in replacement for Terraform)
 - AWS CLI configured with credentials
 - AWS account with permissions for VPC, EC2, and RDS
 
-### 2. Initialize Terraform
+### 2. Initialize OpenTofu
 
 ```bash
-terraform init
+tofu init
 ```
 
 ### 3. Deploy Infrastructure
 
 **EC2 Only (No Database):**
 ```bash
-terraform apply
+tofu apply
 ```
 
 **EC2 + RDS PostgreSQL:**
 ```bash
-terraform apply -var="create_rds=true"
+tofu apply -var="create_rds=true"
 ```
 
 **Custom Instance Name:**
 ```bash
-terraform apply -var="instance_name=my-rhel-server"
+tofu apply -var="instance_name=my-rhel-server"
 ```
 
 **Custom SSH Key Path:**
 ```bash
-terraform apply -var="ssh_key_path=/path/to/my-key.pem"
+tofu apply -var="ssh_key_path=/path/to/my-key.pem"
 ```
 
 ### 4. Connect to EC2
 
 ```bash
 # Get SSH command from output
-terraform output ssh_connection_command
+tofu output ssh_connection_command
 
 # Or connect directly
-ssh -i ssh-key.pem ec2-user@$(terraform output -raw ec2_public_ip)
+ssh -i ssh-key.pem ec2-user@$(tofu output -raw ec2_public_ip)
 ```
 
 ### 5. Connect to RDS (if created)
 
 ```bash
 # SSH to EC2 first
-ssh -i ssh-key.pem ec2-user@$(terraform output -raw ec2_public_ip)
+ssh -i ssh-key.pem ec2-user@$(tofu output -raw ec2_public_ip)
 
 # Install PostgreSQL client on EC2
 sudo dnf install -y postgresql
 
 # Connect to database
-psql -h <rds-endpoint> -U postgres -d postgres
-# Password from: terraform output rds_password
+psql -h $(tofu output -raw rds_endpoint) -U postgres -d postgres
+# Password from: tofu output rds_password
 ```
 
 ## Configuration
@@ -74,7 +74,7 @@ Only three variables are exposed at the root level for simplicity:
 | `create_rds` | bool | false | Whether to create RDS PostgreSQL |
 | `ssh_key_path` | string | ./ssh-key.pem | Path to save SSH private key |
 
-**To customize:** Create a `terraform.tfvars` file or use `-var` flags.
+**To customize:** Create a `terraform.tfvars` file or use `-var` flags with `tofu` commands.
 
 ### Advanced Configuration (Module Level)
 
@@ -109,31 +109,31 @@ For advanced configuration (VPC settings, instance types, RDS settings, etc.), s
 
 ```bash
 # View all outputs
-terraform output
+tofu output
 
 # Specific outputs
-terraform output ec2_public_ip
-terraform output ssh_connection_command
-terraform output rds_endpoint
-terraform output rds_password  # Sensitive
+tofu output ec2_public_ip
+tofu output ssh_connection_command
+tofu output rds_endpoint
+tofu output rds_password  # Sensitive
 ```
 
 ## Usage Examples
 
 ### Development Setup (EC2 Only)
 ```bash
-terraform init
-terraform apply
+tofu init
+tofu apply
 ```
 
 ### Development Setup (EC2 + Database)
 ```bash
-terraform apply -var="create_rds=true"
+tofu apply -var="create_rds=true"
 ```
 
 ### Custom Configuration
 ```bash
-terraform apply \
+tofu apply \
   -var="instance_name=my-app-server" \
   -var="create_rds=true" \
   -var="ssh_key_path=./keys/my-key.pem"
@@ -149,7 +149,7 @@ ssh_key_path  = "./production-key.pem"
 EOF
 
 # Apply
-terraform apply
+tofu apply
 ```
 
 ## Security Considerations
@@ -164,7 +164,7 @@ terraform apply
    ```hcl
    terraform {
      backend "s3" {
-       bucket = "my-terraform-state"
+       bucket = "my-tofu-state"
        key    = "tpa-rhel-aws/terraform.tfstate"
        region = "us-east-1"
        encrypt = true
@@ -206,7 +206,7 @@ See `tpa_rhel_aws/README.md` for detailed security recommendations.
 ## Cleanup
 
 ```bash
-terraform destroy
+tofu destroy
 ```
 
 **Note:** If RDS was created with `skip_final_snapshot = false`, you'll need to delete snapshots manually.
@@ -226,8 +226,8 @@ Approximate monthly costs (us-east-1):
 ### SSH Connection Refused
 ```bash
 # Verify instance is running
-terraform output ec2_instance_id
-aws ec2 describe-instances --instance-ids $(terraform output -raw ec2_instance_id)
+tofu output ec2_instance_id
+aws ec2 describe-instances --instance-ids $(tofu output -raw ec2_instance_id)
 
 # Check your IP is allowed (default: 0.0.0.0/0)
 curl -s ifconfig.me
@@ -244,8 +244,8 @@ chmod 600 ssh-key.pem
 ## Support
 
 - **Module Documentation:** See `tpa_rhel_aws/README.md`
-- **AWS Provider Docs:** https://registry.terraform.io/providers/hashicorp/aws/latest/docs
-- **Terraform Docs:** https://www.terraform.io/docs
+- **AWS Provider Docs:** https://registry.opentofu.org/providers/hashicorp/aws/latest/docs
+- **OpenTofu Docs:** https://opentofu.org/docs
 
 ## License
 

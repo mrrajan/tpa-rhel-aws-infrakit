@@ -29,8 +29,9 @@ module "tpa_rhel_aws" {
   source = "./tpa_rhel_aws"
 
   # Only expose the key variables
-  project_name     = "tparhelinst"
-  create_rds       = true
+  project_name     = var.instance_name
+  create_rds       = var.create_rds
+  ssh_key_path     = var.ssh_key_path
 
   # All other variables use defaults from the module
 }
